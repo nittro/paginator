@@ -1,5 +1,5 @@
 {
-    "name": "nittro/paginator",
+    "name": "nittro-extras/paginator",
     "type": "library",
     "homepage": "https://www.nittro.org",
     "description": "JavaScript client-side library to use with the Nette framework",
