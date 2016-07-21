@@ -1,4 +1,8 @@
-_context.invoke('Nittro.Extras.Paginator.Bridges', function() {
+_context.invoke('Nittro.Extras.Paginator.Bridges', function(Nittro) {
+
+    if (!Nittro.DI) {
+        return;
+    }
 
     var PaginatorDI = _context.extend('Nittro.DI.BuilderExtension', function(containerBuilder, config) {
         PaginatorDI.Super.call(containerBuilder, config);
