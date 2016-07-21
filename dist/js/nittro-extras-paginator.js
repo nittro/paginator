@@ -1,4 +1,4 @@
-_context.invoke('Nittro.Widgets', function (Arrays, Strings, DOM, undefined) {
+_context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undefined) {
 
     var Paginator = _context.extend('Nittro.Object', function(ajax, page, options) {
         Paginator.Super.call(this);
@@ -401,4 +401,18 @@ _context.invoke('Nittro.Widgets', function (Arrays, Strings, DOM, undefined) {
     Arrays: 'Utils.Arrays',
     Strings: 'Utils.Strings',
     DOM: 'Utils.DOM'
+});
+;
+_context.invoke('Nittro.Extras.Paginator.Bridges', function() {
+
+    var PaginatorDI = _context.extend('Nittro.DI.BuilderExtension', function(containerBuilder, config) {
+        PaginatorDI.Super.call(containerBuilder, config);
+    }, {
+        load: function() {
+            this._getContainerBuilder().addFactory('paginator', 'Nittro.Extras.Paginator.Paginator()');
+        }
+    });
+
+    _context.register(PaginatorDI, 'PaginatorDI')
+
 });

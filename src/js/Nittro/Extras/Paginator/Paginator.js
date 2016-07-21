@@ -1,4 +1,4 @@
-_context.invoke('Nittro.Widgets', function (Arrays, Strings, DOM, undefined) {
+_context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undefined) {
 
     var Paginator = _context.extend('Nittro.Object', function(ajax, page, options) {
         Paginator.Super.call(this);

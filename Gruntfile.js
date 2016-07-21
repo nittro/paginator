@@ -1,5 +1,10 @@
 module.exports = function(grunt) {
 
+    var files = [
+        'src/js/Nittro/Extras/Paginator/Paginator.js',
+        'src/js/Nittro/Extras/Paginator/Bridges/PaginatorDI.js'
+    ];
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
@@ -10,9 +15,7 @@ module.exports = function(grunt) {
             },
             paginator: {
                 files: {
-                    'dist/js/nittro-paginator.min.js': [
-                        'src/js/Nittro/Widgets/Paginator.js'
-                    ]
+                    'dist/js/nittro-extras-paginator.min.js': files
                 }
             }
         },
@@ -23,9 +26,7 @@ module.exports = function(grunt) {
             },
             paginator: {
                 files: {
-                    'dist/js/nittro-paginator.js': [
-                        'src/js/Nittro/Widgets/Paginator.js'
-                    ]
+                    'dist/js/nittro-extras-paginator.js': files
                 }
             }
         },
@@ -36,7 +37,7 @@ module.exports = function(grunt) {
                     compress: true
                 },
                 files: {
-                    'dist/css/nittro-paginator.min.css': [
+                    'dist/css/nittro-extras-paginator.min.css': [
                         'src/css/paginator.less'
                     ]
                 }
@@ -46,7 +47,7 @@ module.exports = function(grunt) {
                     compress: false
                 },
                 files: {
-                    'dist/css/nittro-paginator.css': [
+                    'dist/css/nittro-extras-paginator.css': [
                         'src/css/paginator.less'
                     ]
                 }

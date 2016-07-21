@@ -17,11 +17,13 @@
     ],
     "license": "MIT",
     "dependencies": {
-        "nittro-core": "^2.0.0-rc.1",
-        "nittro-page": "^2.0.0-rc.1",
-        "nittro-application": "^2.0.0-rc.1",
-        "nette-forms": "^2.4.0",
+        "nittro-core": "master",
+        "nittro-ajax": "master",
+        "nittro-page": "master",
         "promiz": "^1.0.6"
+    },
+    "devDependencies": {
+        "nittro-di": "master"
     },
     "ignore": [
         "**/.*",
