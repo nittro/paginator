@@ -133,7 +133,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
                         if (top > p.threshold && (!n || top < n.threshold) && p.page !== this._.currentPage) {
                             this._.currentPage = p.page;
-                            this._.pageService.saveHistoryState(this._getPageUrl(p.page), null, true);
+                            this._.pageService.saveHistoryState(this._getPageUrl(p.page, true), null, true);
                             break;
 
                         }
@@ -142,8 +142,8 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
             }.bind(this));
         },
 
-        _getPageUrl: function(page) {
-            var url = this._.options.url;
+        _getPageUrl: function(page, history) {
+            var url = history && typeof this._.options.history !== 'boolean' ? this._.options.history : this._.options.url;
 
             if (typeof url === 'function') {
                 return url.call(null, page);
