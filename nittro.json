@@ -1,0 +1,16 @@
+{
+    "files": {
+        "js": [
+            "src/js/Nittro/Extras/Paginator/Paginator.js",
+            "src/js/Nittro/Extras/Paginator/Bridges/PaginatorDI.js"
+        ],
+        "css": [
+            "src/css/paginator.less"
+        ]
+    },
+    "compat": {
+        "es5": true,
+        "historyApi": true,
+        "transform": true
+    }
+}
