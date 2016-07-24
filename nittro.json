@@ -8,6 +8,7 @@
             "src/css/paginator.less"
         ]
     },
+    "di": "Nittro.Extras.Paginator.Bridges.PaginatorDI()",
     "compat": {
         "es5": true,
         "historyApi": true,
