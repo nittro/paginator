@@ -64,7 +64,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
             }
         ];
 
-        if (Arrays.isArray(this._.options.items)) {
+        if (Array.isArray(this._.options.items)) {
             this._getItems(this._.options.currentPage);
 
         }
@@ -155,7 +155,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
         },
 
         _getItems: function(page) {
-            if (Arrays.isArray(this._.options.items)) {
+            if (Array.isArray(this._.options.items)) {
                 var args = new Array(this._.options.pageSize),
                     items;
 
@@ -168,7 +168,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
                 return this._.ajaxService.get(url)
                     .then(this._.options.responseProcessor)
-                    .then(function(items) { return Arrays.isArray(items) ? items : []; });
+                    .then(function(items) { return Array.isArray(items) ? items : []; });
             }
         },
 
@@ -277,7 +277,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
             }
 
-            if (Arrays.isArray(item)) {
+            if (Array.isArray(item)) {
                 throw new Error("Rendered item contains more than one root HTML element");
 
             }
@@ -299,7 +299,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
                     for (i = 0; i < n; i++) {
                         p = path[i];
 
-                        if (Arrays.isArray(cursor) && p.match(/^\d+$/)) {
+                        if (Array.isArray(cursor) && p.match(/^\d+$/)) {
                             p = parseInt(p);
 
                         }
