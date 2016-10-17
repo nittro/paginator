@@ -1,14 +1,22 @@
 {
     "files": {
         "js": [
-            "src/js/Nittro/Extras/Paginator/Paginator.js",
-            "src/js/Nittro/Extras/Paginator/Bridges/PaginatorDI.js"
+            "src/js/Nittro/Extras/Paginator/Paginator.js"
         ],
         "css": [
             "src/css/paginator.less"
         ]
     },
-    "di": "Nittro.Extras.Paginator.Bridges.PaginatorDI()",
+    "bridges": {
+        "nittro-di": {
+            "files": [
+                "src/js/Nittro/Extras/Paginator/Bridges/PaginatorDI/PaginatorExtension.js"
+            ],
+            "extensions": {
+                "paginator": "Nittro.Extras.Paginator.Bridges.PaginatorDI.PaginatorExtension()"
+            }
+        }
+    },
     "compat": {
         "es5": true,
         "historyApi": true,

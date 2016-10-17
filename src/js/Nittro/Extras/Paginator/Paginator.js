@@ -1,10 +1,9 @@
 _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undefined) {
 
-    var Paginator = _context.extend('Nittro.Object', function(ajax, page, options) {
+    var Paginator = _context.extend('Nittro.Object', function(ajax, options) {
         Paginator.Super.call(this);
 
-        this._.ajaxService = ajax;
-        this._.pageService = page;
+        this._.ajax = ajax;
         this._.options = Arrays.mergeTree({}, Paginator.defaults, options);
         this._.container = this._.options.container;
         this._.viewport = this._resolveViewport(this._.options.container, this._.options.viewport);
@@ -133,7 +132,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
                         if (top > p.threshold && (!n || top < n.threshold) && p.page !== this._.currentPage) {
                             this._.currentPage = p.page;
-                            this._.pageService.saveHistoryState(this._getPageUrl(p.page, true), null, true);
+                            window.history.replaceState({_nittro: true}, document.title, this._getPageUrl(p.page, true));
                             break;
 
                         }
@@ -166,7 +165,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
             } else {
                 var url = this._getPageUrl(page);
 
-                return this._.ajaxService.get(url)
+                return this._.ajax.get(url)
                     .then(this._.options.responseProcessor)
                     .then(function(items) { return Array.isArray(items) ? items : []; });
             }
