@@ -1,7 +1,7 @@
 {
     "files": {
         "js": [
-            "src/js/Nittro/Extras/Paginator/Paginator.js"
+            "src/js/Paginator.js"
         ],
         "css": [
             "src/css/paginator.less"
@@ -10,7 +10,7 @@
     "bridges": {
         "nittro-di": {
             "files": [
-                "src/js/Nittro/Extras/Paginator/Bridges/PaginatorDI/PaginatorExtension.js"
+                "src/js/Bridges/PaginatorDI/PaginatorExtension.js"
             ],
             "extensions": {
                 "paginator": "Nittro.Extras.Paginator.Bridges.PaginatorDI.PaginatorExtension()"
