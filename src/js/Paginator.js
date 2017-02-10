@@ -1,9 +1,10 @@
 _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undefined) {
 
-    var Paginator = _context.extend('Nittro.Object', function(ajax, options) {
+    var Paginator = _context.extend('Nittro.Object', function(ajax, history, options) {
         Paginator.Super.call(this);
 
         this._.ajax = ajax;
+        this._.history = history;
         this._.options = Arrays.mergeTree({}, Paginator.defaults, options);
         this._.container = this._.options.container;
         this._.viewport = this._resolveViewport(this._.options.container, this._.options.viewport);
@@ -132,7 +133,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
                         if (top > p.threshold && (!n || top < n.threshold) && p.page !== this._.currentPage) {
                             this._.currentPage = p.page;
-                            window.history.replaceState({_nittro: true}, document.title, this._getPageUrl(p.page, true));
+                            this._.history.replace(this._getPageUrl(p.page, true));
                             break;
 
                         }
