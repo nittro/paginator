@@ -179,18 +179,24 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
         _preparePreviousPage: function() {
             if (this._.firstPage > 1) {
-                this._.previousItems = this._getItems(this._.firstPage - 1).then(function(items) {
-                    return items
-                        .map(this._createItem.bind(this))
-                        .map(function(elem) {
-                            this._.prevContainer.appendChild(elem);
-                            return elem;
+                this._.previousItems = this._getItems(this._.firstPage - 1)
+                    .then(function(items) {
+                        items = items
+                            .map(this._createItem.bind(this))
+                            .map(function(elem) {
+                                this._.prevContainer.appendChild(elem);
+                                return elem;
 
-                        }.bind(this));
-                }.bind(this));
+                            }.bind(this));
+
+                        this.trigger('page-prepared', {
+                            items: items
+                        });
+
+                        return items;
+                    }.bind(this));
             } else {
                 this._.previousItems = Promise.resolve(null);
-
             }
         },
 
@@ -211,7 +217,8 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
                     pt = parseFloat(style.paddingTop.replace(/px$/, '')),
                     pb = parseFloat(style.paddingBottom.replace(/px$/, '')),
                     m = 0,
-                    delta;
+                    delta,
+                    i;
 
                 if (!style.display.match(/flex$/) && itemStyle.float === 'none') {
                     m = Math.max(parseFloat(itemStyle.marginTop.replace(/px$/, '')), parseFloat(itemStyle.marginBottom.replace(/px$/, '')));
@@ -221,10 +228,11 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
                 delta = this._.prevContainer.clientHeight - pt - pb - m;
                 scrollTop += delta;
 
-                while (items.length) {
-                    this._.container.insertBefore(items.shift(), existing);
-
+                for (i = 0; i < items.length; i++) {
+                    this._.container.insertBefore(items[i], existing);
                 }
+
+                this.trigger('page-rendered', { items: items });
 
                 window.requestAnimationFrame(function() {
                     this._setScrollTop(scrollTop);
@@ -252,18 +260,17 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
                 items = items.map(this._createItem.bind(this));
 
-                var first = items[0];
-
-                while (items.length) {
-                    this._.container.appendChild(items.shift());
-
+                for (var i = 0; i < items.length; i++) {
+                    this._.container.appendChild(items[i]);
                 }
+
+                this.trigger('page-rendered', { items: items });
 
                 this._.nextThreshold = this._computeNextThreshold();
 
                 this._.pageThresholds.push({
                     page: this._.lastPage,
-                    threshold: this._computeElemOffset(first) + this._getScrollTop()
+                    threshold: this._computeElemOffset(items[0]) + this._getScrollTop()
                 });
 
             }.bind(this));
