@@ -94,18 +94,21 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
         destroy: function () {
             DOM.removeListener(this._.viewport, 'scroll', this._.handleScroll);
             this._.container = this._.viewport = this._.options = null;
-
+            this._.lock = false;
         },
 
         _handleScroll: function () {
             if (this._.lock) {
                 return;
-
             }
 
             this._.lock = true;
 
             window.requestAnimationFrame(function() {
+                if (!this._.lock) {
+                    return;
+                }
+
                 this._.lock = false;
 
                 var top = this._getScrollTop(),
@@ -397,8 +400,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
             }
 
-            return !viewport || viewport === document.body ? window : viewport;
-
+            return viewport && DOM.contains(document.body, viewport) ? viewport : window;
         }
     });
 
