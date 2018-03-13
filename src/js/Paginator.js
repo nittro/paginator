@@ -11,65 +11,67 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
         if (this._.options.pageSize === null) {
             throw new Error('You must specify the page size (number of items per page)');
-
         }
 
         if (this._.options.pageCount === null) {
             throw new Error('You must specify the page count');
+        }
 
+        if (this._.options.disablePreviousPages === null) {
+            this._.options.disablePreviousPages = this._.options.currentPage === 1;
         }
 
         if (this._.options.margin === null) {
             this._.options.margin = this._computeMargin();
-
         }
 
         if (this._.options.history === null) {
             this._.options.history = !!this._.options.url;
-
         }
 
         if (typeof this._.options.itemRenderer === 'string') {
             this._.template = DOM.getById(this._.options.itemRenderer).innerHTML;
-
         } else if (typeof this._.options.template === 'string') {
             this._.template = this._.options.template;
-
         }
 
         if (this._.options.responseProcessor === null) {
             this._.options.responseProcessor = this._processResponse.bind(this);
-
         }
 
         this._.firstPage = this._.lastPage = this._.currentPage = this._.options.currentPage;
         this._.lock = false;
-        this._.previousItems = null;
-        this._.previousLock = {
-            time: Date.now() + 1000,
-            threshold: this._computeElemOffset(this._.container.firstElementChild)
-        };
-        this._.previousThreshold = this._computePreviousThreshold();
         this._.nextThreshold = this._computeNextThreshold();
         this._.handleScroll = this._handleScroll.bind(this);
 
-        var prevElem = this._.container.tagName.toLowerCase();
-        this._.prevContainer = DOM.create(prevElem, {'class': 'nittro-paginator-previous'});
-        this._.container.insertBefore(this._.prevContainer, this._.container.firstChild);
+        if (!this._.options.disablePreviousPages) {
+            var prevElem = this._.container.tagName.toLowerCase();
+            this._.prevContainer = DOM.create(prevElem, {'class': 'nittro-paginator-previous'});
+            this._.container.insertBefore(this._.prevContainer, this._.container.firstChild);
+
+            this._.previousItems = null;
+            this._.previousLock = {
+                time: Date.now() + 1000,
+                threshold: this._computeElemOffset(this._getFirstItem())
+            };
+
+            this._.previousThreshold = this._computePreviousThreshold();
+        }
 
         this._.pageThresholds = [
             {
                 page: this._.currentPage,
-                threshold: this._computeElemOffset(this._.prevContainer.nextElementSibling) + this._getScrollTop()
+                threshold: this._computeElemOffset(this._getFirstItem()) + this._getScrollTop()
             }
         ];
 
         if (Array.isArray(this._.options.items)) {
             this._getItems(this._.options.currentPage);
-
         }
 
-        this._preparePreviousPage();
+        if (!this._.options.disablePreviousPages) {
+            this._preparePreviousPage();
+        }
 
         DOM.addListener(this._.viewport, 'scroll', this._.handleScroll);
 
@@ -87,13 +89,18 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
                 margin: null,
                 currentPage: 1,
                 pageCount: null,
-                pageSize: null
+                pageSize: null,
+                disablePreviousPages: null
             }
         },
 
         destroy: function () {
+            if (this._.prevContainer) {
+                this._.prevContainer.parentNode.removeChild(this._.prevContainer);
+            }
+
             DOM.removeListener(this._.viewport, 'scroll', this._.handleScroll);
-            this._.container = this._.viewport = this._.options = null;
+            this._.container = this._.prevContainer = this._.viewport = this._.options = null;
             this._.lock = false;
         },
 
@@ -150,10 +157,8 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
             if (typeof url === 'function') {
                 return url.call(null, page);
-
             } else {
                 return url.replace(/%page%/g, page);
-
             }
         },
 
@@ -177,7 +182,6 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
         _processResponse: function(response) {
             return response.getPayload().items || [];
-
         },
 
         _preparePreviousPage: function() {
@@ -189,7 +193,6 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
                             .map(function(elem) {
                                 this._.prevContainer.appendChild(elem);
                                 return elem;
-
                             }.bind(this));
 
                         this.trigger('page-prepared', {
@@ -207,7 +210,6 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
             return this._.previousItems.then(function(items) {
                 if (!items) {
                     return;
-
                 }
 
                 this._.firstPage--;
@@ -225,7 +227,6 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
                 if (!style.display.match(/flex$/) && itemStyle.float === 'none') {
                     m = Math.max(parseFloat(itemStyle.marginTop.replace(/px$/, '')), parseFloat(itemStyle.marginBottom.replace(/px$/, '')));
-
                 }
 
                 delta = this._.prevContainer.clientHeight - pt - pb - m;
@@ -284,12 +285,10 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
             if (typeof item === 'string') {
                 item = DOM.createFromHtml(item);
-
             }
 
             if (Array.isArray(item)) {
                 throw new Error("Rendered item contains more than one root HTML element");
-
             }
 
             return item;
@@ -311,30 +310,28 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
                         if (Array.isArray(cursor) && p.match(/^\d+$/)) {
                             p = parseInt(p);
-
                         }
 
                         if (cursor[p] === undefined) {
                             return '';
-
                         }
 
                         cursor = cursor[p];
-
                     }
 
                     return Strings.escapeHtml(cursor + '');
-
                 });
             } else {
                 return this._.options.itemRenderer.call(null, data);
-
             }
+        },
+
+        _getFirstItem: function () {
+            return this._.options.disablePreviousPages ? this._.container.firstElementChild : this._.prevContainer.nextElementSibling;
         },
 
         _computePreviousThreshold: function() {
             return this._.firstPage > 1 ? this._.options.margin : null;
-
         },
 
         _computeNextThreshold: function() {
@@ -344,7 +341,6 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
             var ofs = this._computeElemOffset(this._.container.lastElementChild, 'bottom');
             return Math.max(0, ofs + this._getScrollTop() - this._getViewportHeight() - this._.options.margin);
-
         },
 
         _computeElemOffset: function(elem, edge) {
@@ -352,7 +348,6 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
             if (this._.viewport !== window) {
                 offset -= this._.viewport.getBoundingClientRect().top;
-
             }
 
             return offset;
@@ -361,12 +356,10 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
         _computeMargin: function () {
             return this._getViewportHeight() / 2;
-
         },
 
         _getViewportHeight: function() {
             return this._.viewport.clientHeight || this._.viewport.innerHeight;
-
         },
 
         _getScrollTop: function() {
@@ -393,11 +386,9 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
 
                 while (viewport && viewport !== document.body && !isScrollable(viewport)) {
                     viewport = viewport.parentNode;
-
                 }
             } else if (viewport === null) {
                 return window;
-
             }
 
             return viewport && DOM.contains(document.body, viewport) ? viewport : window;
