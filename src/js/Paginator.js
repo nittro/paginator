@@ -8,6 +8,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
         this._.options = Arrays.mergeTree({}, Paginator.defaults, options);
         this._.container = this._.options.container;
         this._.viewport = this._resolveViewport(this._.options.container, this._.options.viewport);
+        this._.currentRequest = null;
 
         if (this._.options.pageSize === null) {
             throw new Error('You must specify the page size (number of items per page)');
@@ -99,8 +100,12 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
                 this._.prevContainer.parentNode.removeChild(this._.prevContainer);
             }
 
+            if (this._.currentRequest) {
+                this._.currentRequest.abort();
+            }
+
             DOM.removeListener(this._.viewport, 'scroll', this._.handleScroll);
-            this._.container = this._.prevContainer = this._.viewport = this._.options = null;
+            this._.container = this._.prevContainer = this._.viewport = this._.options = this._.currentRequest = null;
             this._.lock = false;
         },
 
@@ -174,7 +179,10 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
             } else {
                 var url = this._getPageUrl(page);
 
-                return this._.ajax.get(url)
+                this._.currentRequest = this._.ajax.get(url);
+
+                return this._.currentRequest
+                    .then(function(response) { this._.currentRequest = null; return response; }.bind(this))
                     .then(this._.options.responseProcessor)
                     .then(function(items) { return Array.isArray(items) ? items : []; });
             }
@@ -200,7 +208,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
                         });
 
                         return items;
-                    }.bind(this));
+                    }.bind(this), function() { return null; });
             } else {
                 this._.previousItems = Promise.resolve(null);
             }
@@ -277,7 +285,7 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
                     threshold: this._computeElemOffset(items[0]) + this._getScrollTop()
                 });
 
-            }.bind(this));
+            }.bind(this), function() { return null; });
         },
 
         _createItem: function(data) {
