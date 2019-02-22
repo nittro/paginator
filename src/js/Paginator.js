@@ -335,7 +335,9 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
         },
 
         _getFirstItem: function () {
-            return this._.options.disablePreviousPages ? this._.container.firstElementChild : this._.prevContainer.nextElementSibling;
+            return this._.options.disablePreviousPages
+                ? this._.container.firstElementChild
+                : this._.prevContainer.nextElementSibling;
         },
 
         _computePreviousThreshold: function() {
@@ -352,7 +354,15 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
         },
 
         _computeElemOffset: function(elem, edge) {
-            var offset = elem.getBoundingClientRect()[edge || 'top'];
+            var rect;
+
+            if (!elem) {
+                rect = this._.container.getBoundingClientRect();
+                return rect[edge || 'top'];
+            }
+
+            rect = elem.getBoundingClientRect();
+            var offset = rect[edge || 'top'];
 
             if (this._.viewport !== window) {
                 offset -= this._.viewport.getBoundingClientRect().top;
