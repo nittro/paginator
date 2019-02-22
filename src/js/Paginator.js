@@ -354,14 +354,10 @@ _context.invoke('Nittro.Extras.Paginator', function (Arrays, Strings, DOM, undef
         },
 
         _computeElemOffset: function(elem, edge) {
-            var rect;
+            var rect = elem
+                ? elem.getBoundingClientRect()
+                : this._.container.getBoundingClientRect();
 
-            if (!elem) {
-                rect = this._.container.getBoundingClientRect();
-                return rect[edge || 'top'];
-            }
-
-            rect = elem.getBoundingClientRect();
             var offset = rect[edge || 'top'];
 
             if (this._.viewport !== window) {
